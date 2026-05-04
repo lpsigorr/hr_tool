@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FleetRH · Gestion chauffeurs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-mark">F</div>
+        <span class="logo-text">FleetRH</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-view="dashboard" href="#">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.2"/></svg>
+          Vue d'ensemble
+        </a>
+        <a class="nav-item" data-view="drivers" href="#">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5" r="3" stroke="currentColor" stroke-width="1.2"/><path d="M2 13c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Chauffeurs
+        </a>
+        <a class="nav-item" data-view="hours" href="#">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 5v3.5l2 2" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Heures
+        </a>
+        <a class="nav-item" data-view="absences" href="#">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 7h12M5 1v4M11 1v4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Absences
+        </a>
+        <a class="nav-item" data-view="documents" href="#">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M9 1H4a1.5 1.5 0 0 0-1.5 1.5v11A1.5 1.5 0 0 0 4 15h8a1.5 1.5 0 0 0 1.5-1.5V6L9 1z" stroke="currentColor" stroke-width="1.2"/><path d="M9 1v5h4.5M5 9h6M5 12h4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          Documents
+        </a>
+        <a class="nav-item" data-view="issues" href="#">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.2"/><path d="M8 5v3M8 10.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Problèmes
+          <span class="nav-badge" id="issues-badge">2</span>
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <div class="user-avatar">V</div>
+          <div>
+            <div class="user-name">Vanina</div>
+            <div class="user-role">Admin RH</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- DASHBOARD VIEW -->
+      <div class="view active" id="view-dashboard">
+        <div class="view-header">
+          <div>
+            <h1>Bonjour, Vanina</h1>
+            <p class="view-sub" id="today-date"></p>
+          </div>
+          <button class="btn-primary" onclick="openModal('add-driver')">+ Ajouter chauffeur</button>
+        </div>
+
+        <div class="stat-row">
+          <div class="stat-card">
+            <div class="stat-label">Chauffeurs actifs</div>
+            <div class="stat-value">12</div>
+            <div class="stat-trend ok">Tous actifs</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Docs à renouveler</div>
+            <div class="stat-value warn" id="docs-count">3</div>
+            <div class="stat-trend warn">Dans les 30 jours</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Absences ce mois</div>
+            <div class="stat-value">2</div>
+            <div class="stat-trend muted">En cours</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Problèmes ouverts</div>
+            <div class="stat-value danger" id="issues-count">2</div>
+            <div class="stat-trend danger">À traiter</div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Alertes actives</h2>
+              <span class="chip chip-warn">4 alertes</span>
+            </div>
+            <div class="alert-list" id="alert-list"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Aperçu chauffeurs</h2>
+              <a class="link-sm" data-view="drivers" href="#">Voir tous →</a>
+            </div>
+            <div class="driver-preview" id="driver-preview"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DRIVERS VIEW -->
+      <div class="view" id="view-drivers">
+        <div class="view-header">
+          <div>
+            <h1>Chauffeurs</h1>
+            <p class="view-sub">12 chauffeurs actifs</p>
+          </div>
+          <button class="btn-primary" onclick="openModal('add-driver')">+ Nouveau chauffeur</button>
+        </div>
+        <div class="search-bar">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <input type="text" id="driver-search" placeholder="Rechercher un chauffeur..." oninput="filterDrivers()">
+        </div>
+        <div class="driver-grid" id="driver-grid"></div>
+      </div>
+
+      <!-- HOURS VIEW -->
+      <div class="view" id="view-hours">
+        <div class="view-header">
+          <div>
+            <h1>Heures chauffeurs</h1>
+            <p class="view-sub">Semaine en cours</p>
+          </div>
+          <div class="header-actions">
+            <select class="select-sm" id="week-select" onchange="renderHours()">
+              <option value="19">Semaine 19 (mai)</option>
+              <option value="18">Semaine 18</option>
+              <option value="17">Semaine 17</option>
+            </select>
+            <button class="btn-outline" onclick="exportHours()">Exporter CSV</button>
+          </div>
+        </div>
+        <div class="panel">
+          <table class="data-table" id="hours-table">
+            <thead>
+              <tr><th>Chauffeur</th><th>Lun</th><th>Mar</th><th>Mer</th><th>Jeu</th><th>Ven</th><th>Total</th><th>Statut</th></tr>
+            </thead>
+            <tbody id="hours-body"></tbody>
+          </table>
+        </div>
+        <div class="stat-row" style="margin-top:16px">
+          <div class="stat-card"><div class="stat-label">Total heures équipe</div><div class="stat-value" id="total-hours">—</div></div>
+          <div class="stat-card"><div class="stat-label">Dépassements</div><div class="stat-value warn" id="total-over">—</div></div>
+          <div class="stat-card"><div class="stat-label">Heures supplémentaires</div><div class="stat-value" id="total-extra">—</div></div>
+          <div class="stat-card"><div class="stat-label">Absences</div><div class="stat-value" id="total-abs">—</div></div>
+        </div>
+      </div>
+
+      <!-- ABSENCES VIEW -->
+      <div class="view" id="view-absences">
+        <div class="view-header">
+          <div>
+            <h1>Absences</h1>
+            <p class="view-sub">Gestion des congés et arrêts</p>
+          </div>
+          <button class="btn-primary" onclick="openModal('add-absence')">+ Nouvelle absence</button>
+        </div>
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-head"><h2>Absences en cours & planifiées</h2></div>
+            <table class="data-table">
+              <thead><tr><th>Chauffeur</th><th>Type</th><th>Du</th><th>Au</th><th>Jours</th><th>Statut</th></tr></thead>
+              <tbody id="absences-body"></tbody>
+            </table>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h2>Soldes congés 2025</h2></div>
+            <div id="leave-balances"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DOCUMENTS VIEW -->
+      <div class="view" id="view-documents">
+        <div class="view-header">
+          <div>
+            <h1>Documents</h1>
+            <p class="view-sub">Permis, contrats, cartes conducteur</p>
+          </div>
+          <button class="btn-primary" onclick="openModal('add-doc')">+ Ajouter document</button>
+        </div>
+        <div class="search-bar">
+          <svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="6.5" cy="6.5" r="4.5" stroke="currentColor" stroke-width="1.2"/><path d="M10 10l3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+          <input type="text" id="doc-search" placeholder="Rechercher un document..." oninput="filterDocs()">
+          <select class="select-sm" id="doc-filter" onchange="filterDocs()" style="margin-left:8px">
+            <option value="all">Tous les statuts</option>
+            <option value="urgent">Urgent</option>
+            <option value="warn">À renouveler</option>
+            <option value="ok">Valide</option>
+          </select>
+        </div>
+        <div class="panel">
+          <table class="data-table">
+            <thead><tr><th>Chauffeur</th><th>Document</th><th>Numéro</th><th>Émis le</th><th>Expire le</th><th>Statut</th><th>Actions</th></tr></thead>
+            <tbody id="docs-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ISSUES VIEW -->
+      <div class="view" id="view-issues">
+        <div class="view-header">
+          <div>
+            <h1>Problèmes</h1>
+            <p class="view-sub">Suivi des incidents et actions RH</p>
+          </div>
+          <button class="btn-primary" onclick="openModal('add-issue')">+ Signaler</button>
+        </div>
+        <div class="issues-cols">
+          <div class="issue-col">
+            <div class="issue-col-head"><div class="col-dot danger"></div>Ouvert <span class="chip chip-danger" id="open-count">0</span></div>
+            <div class="issue-list" id="issues-open"></div>
+          </div>
+          <div class="issue-col">
+            <div class="issue-col-head"><div class="col-dot warn"></div>En cours <span class="chip chip-warn" id="progress-count">0</span></div>
+            <div class="issue-list" id="issues-progress"></div>
+          </div>
+          <div class="issue-col">
+            <div class="issue-col-head"><div class="col-dot ok"></div>Résolu <span class="chip chip-ok" id="resolved-count">0</span></div>
+            <div class="issue-list" id="issues-resolved"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DRIVER PROFILE VIEW -->
+      <div class="view" id="view-profile">
+        <div class="view-header">
+          <button class="btn-back" onclick="goBack()">← Retour</button>
+        </div>
+        <div id="profile-content"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MODALS -->
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-head">
+        <h3 id="modal-title">Nouveau</h3>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
